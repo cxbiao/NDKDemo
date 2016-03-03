@@ -3,9 +3,10 @@
 #include "com_bryan_ndk_JniBasic.h"
 #include "StringUtils.h"
 #include <android/log.h>
+#include <vector>
 #define LOG_TAG "nativeProcess"
 #define LOG(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
-
+using namespace std;
 
 /**
  * C 语言 (*env)->
@@ -22,6 +23,13 @@ JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHello(JNIEnv *env, jcla
 JNIEXPORT jint JNICALL Java_com_bryan_ndk_JniBasic_add(JNIEnv *env, jclass jcls, jint x, jint y){
     LOG("x=%d\n", x);
     LOG("y=%d\n", y);
+
+	vector<int> ves;
+	ves.push_back(1);
+	ves.push_back(2);
+	ves.push_back(4);
+	LOG("vector:first=%d",*(ves.begin()));
+	LOG("vector:size=%d",ves.size());
     return x + y;
 }
 
