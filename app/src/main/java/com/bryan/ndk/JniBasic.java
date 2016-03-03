@@ -5,29 +5,27 @@ import android.util.Log;
 /**
  * Author：Cxb on 2016/3/2 17:33
  */
-public class NativeProcess {
+public class JniBasic {
 
-    static {
-        System.loadLibrary("nativeProcess");
-    }
+
 
     //C调用java空方法
     public void hello(){
-        Log.d("NativeProcess", "NativeProcess:hello()  我被调用了");
+        Log.d("nativeProcess", "JniBasic:hello()  我被调用了");
     }
     //C调用java中的带两个int参数的方法
     public int Add(int x,int y){
         int result=x+y;
-        Log.d("NativeProcess",result+"");
+        Log.d("nativeProcess",result+"");
         return result;
     }
     //C调用java中参数为string的方法
     public void printStr(String str){
-        Log.d("NativeProcess",str);
+        Log.d("nativeProcess",str);
     }
 
     public static void demo(){
-        Log.d("NativeProcess", "哈哈哈,我是静态方法");
+        Log.d("nativeProcess", "哈哈哈,我是静态方法");
     }
 
 
@@ -52,7 +50,7 @@ public class NativeProcess {
 
 
 
-    public native void callhelloFromNativeProcess();
+    public native void callhelloFromBasic();
     public native void callAdd();
     public native void callprintStr();
     public native void callhelloFromMainActivity();
