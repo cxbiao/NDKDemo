@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bryan.MainActivity">
+
+
+<GridLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="3"
+    >
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="easyHello"
+        android:layout_columnWeight="1"
+        android:text="简单调用" />
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="add"
+        android:layout_columnWeight="1"
+        android:text="加法" />
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="handleStr"
+        android:layout_columnWeight="1"
+        android:text="字符串处理" />
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="handleArr"
+        android:layout_columnWeight="1"
+        android:text="数组处理" />
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="callHello1"
+        android:layout_columnWeight="1"
+        android:textAllCaps="false"
+        android:text="callHello1" />
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="callAdd"
+        android:layout_columnWeight="1"
+        android:textAllCaps="false"
+        android:text="callAdd" />
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="callprintStr"
+        android:layout_columnWeight="1"
+        android:textAllCaps="false"
+        android:text="callprintStr" />
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="callhello2"
+        android:layout_columnWeight="1"
+        android:textAllCaps="false"
+        android:text="callhello2" />
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="callStatic"
+        android:layout_columnWeight="1"
+        android:textAllCaps="false"
+        android:text="callStatic" />
+
+
+</GridLayout>
+
+</LinearLayout>
