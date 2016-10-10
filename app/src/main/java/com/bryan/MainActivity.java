@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void hello() {
-        Log.d("nativeProcess", "MainActivity:hello()  我被调用了");
+        Log.i("nativeProcess", "MainActivity:hello()  我被调用了");
     }
 
     public void easyHello(View v){
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         int[] src={0,1,2,3,4,5};
         int[] dest= JniBasic.intMethod(src);
         for (int param:dest){
-            Log.d("nativeProcess", param+"");
+            Log.i("nativeProcess", param+"");
         }
 
     }

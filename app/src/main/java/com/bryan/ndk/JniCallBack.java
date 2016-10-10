@@ -16,7 +16,7 @@ public class JniCallBack {
     public void onNativeCallback( int count ) {
         //子线程
         //Log.d("nativeProcess", Thread.currentThread().getName());
-        Log.d("nativeProcess", "onNativeCallback count=" + count);
+        Log.i("nativeProcess", "onNativeCallback count=" + count);
     }
 
 

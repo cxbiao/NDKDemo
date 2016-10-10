@@ -9,6 +9,17 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+	    externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++11 -frtti -fexceptions"
+                 // 指定只用clang编译器
+                // Clang是一个C语言、Objective-C、C++语言的轻量级编译器。
+                arguments "-DANDROID_TOOLCHAIN=clang",'-DANDROID_STL=gnustl_static'
+
+                // 生成.so库的目标平台
+                //abiFilters "armeabi-v7a" , "armeabi" ,"x86"
+            }
+        }
     }
     buildTypes {
         release {
@@ -16,9 +27,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets {
-        main.jniLibs.srcDir 'libs'
+
+   externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
     }
+
     productFlavors {
         armeabi {
             ndk{

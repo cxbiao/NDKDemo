@@ -11,21 +11,21 @@ public class JniBasic {
 
     //C调用java空方法
     public void hello(){
-        Log.d("nativeProcess", "JniBasic:hello()  我被调用了");
+        Log.i("nativeProcess", "JniBasic:hello()  我被调用了");
     }
     //C调用java中的带两个int参数的方法
     public int Add(int x,int y){
         int result=x+y;
-        Log.d("nativeProcess",result+"");
+        Log.i("nativeProcess",result+"");
         return result;
     }
     //C调用java中参数为string的方法
     public void printStr(String str){
-        Log.d("nativeProcess",str);
+        Log.i("nativeProcess",str);
     }
 
     public static void demo(){
-        Log.d("nativeProcess", "哈哈哈,我是静态方法");
+        Log.i("nativeProcess", "哈哈哈,我是静态方法");
     }
 
 
