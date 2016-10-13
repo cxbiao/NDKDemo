@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleStr(View v){
-        Toast.makeText(this, JniBasic.sayHelloInC("this is perfect"),Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, JniBasic.sayHelloInC("this is perfect--中国"),Toast.LENGTH_SHORT).show();
     }
 
     public void handleArr(View v){
