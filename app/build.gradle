@@ -14,7 +14,7 @@ android {
                 cppFlags "-std=c++11 -frtti -fexceptions"
                  // 指定只用clang编译器
                 // Clang是一个C语言、Objective-C、C++语言的轻量级编译器。
-                arguments "-DANDROID_TOOLCHAIN=clang",'-DANDROID_STL=gnustl_static'
+                arguments "-DANDROID_TOOLCHAIN=clang","-DANDROID_STL=gnustl_static"
 
                 // 生成.so库的目标平台
                 //abiFilters "armeabi-v7a" , "armeabi" ,"x86"
