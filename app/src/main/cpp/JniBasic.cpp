@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "com_bryan_ndk_JniBasic.h"
-#include "StringUtils.h"
 #include <android/log.h>
 #include <vector>
 #define LOG_TAG "nativeProcess"
@@ -34,8 +33,11 @@ JNIEXPORT jint JNICALL Java_com_bryan_ndk_JniBasic_add(JNIEnv *env, jclass jcls,
 
 
 JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHelloInC(JNIEnv *env, jclass jcls, jstring jstr){
-    char *cstr = StringUtils::Jstring2CStr(env, jstr);
-    strcat(cstr, " hello");
+	//jstring 转char *
+    const char *cstr = env->GetStringUTFChars(jstr,0);
+	char *copy=new char[100];
+    strcpy(copy,cstr);
+	env->ReleaseStringUTFChars(jstr,cstr);
     LOG("%s", cstr);
     return env->NewStringUTF(cstr);
 }
