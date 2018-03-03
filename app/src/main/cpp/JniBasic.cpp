@@ -34,12 +34,13 @@ JNIEXPORT jint JNICALL Java_com_bryan_ndk_JniBasic_add(JNIEnv *env, jclass jcls,
 
 JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHelloInC(JNIEnv *env, jclass jcls, jstring jstr){
 	//jstring 转char *
-    const char *cstr = env->GetStringUTFChars(jstr,0);
-	char *copy=new char[100];
-    strcpy(copy,cstr);
+    const char *cstr = env->GetStringUTFChars(jstr,JNI_FALSE);
+	char copy[100];
+	strcpy(copy,cstr);
+    strcat(copy,"_concat");
 	env->ReleaseStringUTFChars(jstr,cstr);
-    LOG("%s", cstr);
-    return env->NewStringUTF(cstr);
+    LOG("%s", copy);
+    return env->NewStringUTF(copy);
 }
 
 
