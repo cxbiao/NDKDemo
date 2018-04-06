@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "com_bryan_ndk_JniBasic.h"
 #include <android/log.h>
