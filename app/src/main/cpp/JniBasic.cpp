@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "com_bryan_ndk_JniBasic.h"
 #include <android/log.h>
 #include <vector>
@@ -38,6 +39,7 @@ JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHelloInC(JNIEnv *env, j
 	char copy[100];
 	strcpy(copy,cstr);
     strcat(copy,"_concat");
+
 	env->ReleaseStringUTFChars(jstr,cstr);
     LOG("%s", copy);
     return env->NewStringUTF(copy);
