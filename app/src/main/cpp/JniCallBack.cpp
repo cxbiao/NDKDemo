@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "com_bryan_ndk_JniCallBack.h"
 #define LOG_TAG "nativeProcess"
-#include "log.h"
 
+#include "log.h"
+#include "JNIHelp.h"
+#include "utils.h"
 
 
 
@@ -14,26 +15,17 @@ JavaVM * gJavaVM;
 jobject  gJavaObj;
 static volatile int gIsThreadExit = 0;
 
+
 static void* native_thread_exec(void *arg) {
 
 	JNIEnv *env;
 
 	//从全局的JavaVM中获取到环境变量
-	gJavaVM->AttachCurrentThread(&env, NULL);
+	//gFields.vm->AttachCurrentThread(&env, NULL);
 
-	//获取Java层对应的类
-	jclass javaClass = env->GetObjectClass(gJavaObj);
-	if( javaClass == NULL ) {
-		LOGI("Fail to find javaClass");
-		return 0;
-	}
+    ATTACH_HELPER(gFields.vm,&env);
 
-	//获取Java层被回调的函数
-	jmethodID javaCallback = env->GetMethodID(javaClass,"onNativeCallback","(I)V");
-	if( javaCallback == NULL) {
-        LOGI("Fail to find method onNativeCallback");
-		return 0;
-	}
+
 
     LOGI("native_thread_exec loop enter");
 
@@ -43,19 +35,20 @@ static void* native_thread_exec(void *arg) {
 	while(!gIsThreadExit) {
 
 		//回调Java层的函数
-		env->CallVoidMethod(gJavaObj,javaCallback,count++);
+		env->CallVoidMethod(gFields.JniCallBack.instance,gFields.JniCallBack.onNativeCallback,count++);
 
 		//休眠1秒
 		sleep(1);
         //usleep(1000000); //微秒
 	}
 
-    env->DeleteLocalRef(javaClass);
-	gJavaVM->DetachCurrentThread();
+	//gFields.vm->DetachCurrentThread();
 
     LOGI("native_thread_exec loop leave");
     return  NULL;
 }
+
+
 
 
 /*
@@ -63,14 +56,14 @@ static void* native_thread_exec(void *arg) {
  * Method:    nativeInitilize
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeInitilize(JNIEnv *env, jobject obj){
+static void  init(JNIEnv *env, jobject obj){
 	//注意，直接通过定义全局的JNIEnv和jobject变量，在此保存env和thiz的值是不可以在线程中使用的
 
 	//线程不允许共用env环境变量，但是JavaVM指针是整个jvm共用的，所以可以通过下面的方法保存JavaVM指针，在线程中使用
-	env->GetJavaVM(&gJavaVM);
+	//env->GetJavaVM(&gJavaVM);
 
 	//同理，jobject变量也不允许在线程中共用，因此需要创建全局的jobject对象在线程中访问该对象
-	gJavaObj = env->NewGlobalRef(obj);
+	gFields.JniCallBack.instance = env->NewGlobalRef(obj);
 }
 
 /*
@@ -78,7 +71,7 @@ JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeInitilize(JNIEnv *en
  * Method:    nativeThreadStart
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeThreadStart(JNIEnv *env, jobject obj){
+static void  start(JNIEnv *env, jobject obj){
 	gIsThreadExit = 0;
 
 	//通过pthread库创建线程
@@ -96,9 +89,29 @@ JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeThreadStart(JNIEnv *
  * Method:    nativeThreadStop
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeThreadStop(JNIEnv *env, jobject obj){
+static void  stop(JNIEnv *env, jobject obj){
 	gIsThreadExit = 1;
     LOGI("native_thread_stop success");
 }
 
+static const JNINativeMethod gMethods[] = {
+		{"nativeInitilize", "()V", (void *)init},
+		{"nativeThreadStart", "()V", (void *)start},
+		{"nativeThreadStop", "()V", (void*)stop}
+
+
+};
+
+int regiser_JNICallBack(JavaVM* vm ,JNIEnv* env){
+	if (gFields.JniCallBack.clazz == NULL) {
+		LOGE("Can't find com/bryan/ndk/JniCallBack");
+		return -1;
+	}
+	if (env->RegisterNatives(gFields.JniCallBack.clazz,gMethods,NELEM(gMethods)) !=JNI_OK) {
+		LOGE("RegisterNatives failed for  %s\n","JniCallBack");
+		return JNI_ERR;
+	}
+	LOGI("Register JniCallBack success");
+	return JNI_OK;
+}
 

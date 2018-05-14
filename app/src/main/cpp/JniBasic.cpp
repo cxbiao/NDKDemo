@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
-#include "com_bryan_ndk_JniBasic.h"
 #define LOG_TAG "nativeProcess"
 #include "log.h"
+#include "JNIHelp.h"
 #include <vector>
+#include "utils.h"
 
 using namespace std;
 
@@ -13,13 +14,14 @@ using namespace std;
  */
 
 
-JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHello(JNIEnv *env, jclass jcls){
+
+static jstring sayHello(JNIEnv *env, jclass jcls){
 	LOGI("hello world from c中文");
     return env->NewStringUTF("hello world from c中文");
 
 }
 
-JNIEXPORT jint JNICALL Java_com_bryan_ndk_JniBasic_add(JNIEnv *env, jclass jcls, jint x, jint y){
+static jint  add(JNIEnv *env, jclass jcls, jint x, jint y){
 	LOGI("x=%d\n", x);
 	LOGI("y=%d\n", y);
 
@@ -33,7 +35,7 @@ JNIEXPORT jint JNICALL Java_com_bryan_ndk_JniBasic_add(JNIEnv *env, jclass jcls,
 }
 
 
-JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHelloInC(JNIEnv *env, jclass jcls, jstring jstr){
+static jstring  sayHelloInC(JNIEnv *env, jclass jcls, jstring jstr){
 	//jstring 转char *
     const char *cstr = env->GetStringUTFChars(jstr,JNI_FALSE);
 	char copy[100];
@@ -46,7 +48,7 @@ JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHelloInC(JNIEnv *env, j
 }
 
 
-JNIEXPORT jintArray JNICALL Java_com_bryan_ndk_JniBasic_intMethod(JNIEnv *env, jclass jcls, jintArray jintArr){
+static jintArray  intMethod(JNIEnv *env, jclass jcls, jintArray jintArr){
     // jArray  遍历数组   jint*       (*GetIntArrayElements)(JNIEnv*, jintArray, jboolean*);
     // 数组的长度    jsize       (*GetArrayLength)(JNIEnv*, jarray);
     // 对数组中每个元素 +5
@@ -59,51 +61,61 @@ JNIEXPORT jintArray JNICALL Java_com_bryan_ndk_JniBasic_intMethod(JNIEnv *env, j
 }
 
 
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniBasic_callhelloFromBasic(JNIEnv *env, jobject obj){
-	//jclass      (*FindClass)(JNIEnv*, const char*);
-	jclass clazz =env->FindClass("com/bryan/ndk/JniBasic");
-	// jmethodID   (*GetMethodID)(JNIEnv*, jclass, const char*, const char*);
-	//javap -s获得方法签名
-	jmethodID method=env->GetMethodID(clazz,"hello","()V");
-	// void        (*CallVoidMethod)(JNIEnv*, jobject, jmethodID, ...);
-	env->CallVoidMethod(obj,method);
+static void  callhelloFromBasic(JNIEnv *env, jobject obj){
+
+	env->CallVoidMethod(obj,gFields.JniBasic.hello);
 }
 
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniBasic_callAdd(JNIEnv *env, jobject obj){
-	//jclass      (*FindClass)(JNIEnv*, const char*);
-	jclass clazz =env->FindClass("com/bryan/ndk/JniBasic");
-	// jmethodID   (*GetMethodID)(JNIEnv*, jclass, const char*, const char*);
-	//javap -s获得方法签名
-	jmethodID method=env->GetMethodID(clazz,"Add","(II)I");
-	// void        (*CallIntMethod)(JNIEnv*, jobject, jmethodID, ...);
-	env->CallIntMethod(obj,method,3,4);
+static void  callAdd(JNIEnv *env, jobject obj){
+
+	env->CallIntMethod(obj,gFields.JniBasic.Add,3,4);
 }
 
 
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniBasic_callprintStr(JNIEnv *env, jobject obj){
-	//jclass      (*FindClass)(JNIEnv*, const char*);
-	jclass clazz =env->FindClass("com/bryan/ndk/JniBasic");
-	// jmethodID   (*GetMethodID)(JNIEnv*, jclass, const char*, const char*);
-	//javap -s获得方法签名
-	jmethodID method=env->GetMethodID(clazz,"printStr","(Ljava/lang/String;)V");
+static void  callprintStr(JNIEnv *env, jobject obj){
+
 	jstring str=env->NewStringUTF("hello");
-	env->CallVoidMethod(obj,method,str);
+	env->CallVoidMethod(obj,gFields.JniBasic.printStr,str);
 }
 
 //obj是native方法所在的类
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniBasic_callhelloFromMainActivity(JNIEnv *env, jobject obj){
-	jclass clazz =env->FindClass("com/bryan/MainActivity");
+static void  callhelloFromMainActivity(JNIEnv *env, jobject obj){
 
-	jmethodID method=env->GetMethodID(clazz,"hello","()V");
-	jobject objmain=env->AllocObject(clazz);// new MainActivity();
-	env->CallVoidMethod(objmain,method);
+	jobject objmain=env->AllocObject(gFields.MainActivity.clazz);// new MainActivity();
+	env->CallVoidMethod(objmain,gFields.MainActivity.hello);
+    env->DeleteLocalRef(objmain);
 }
 
 
-JNIEXPORT void JNICALL Java_com_bryan_ndk_JniBasic_callStaticMethod(JNIEnv *env, jobject obj){
-	jclass clazz =env->FindClass("com/bryan/ndk/JniBasic");
-	//  jmethodID   (*GetStaticMethodID)(JNIEnv*, jclass, const char*, const char*);
-	jmethodID method=env->GetStaticMethodID(clazz,"demo","()V");
-	//void        (*CallStaticVoidMethod)(JNIEnv*, jclass, jmethodID, ...);
-	env->CallStaticVoidMethod(clazz,method);
+static void  callStaticMethod(JNIEnv *env, jobject obj){
+
+	env->CallStaticVoidMethod(gFields.JniBasic.clazz,gFields.JniBasic.demo);
+}
+
+
+static const JNINativeMethod gMethods[] = {
+		{"sayHello", "()Ljava/lang/String;", (void *)sayHello},
+		{"add", "(II)I", (void *)add},
+		{"sayHelloInC", "(Ljava/lang/String;)Ljava/lang/String;", (void*)sayHelloInC},
+		{"intMethod","([I)[I",(void*)intMethod},
+		{"callhelloFromBasic","()V",(void*)callhelloFromBasic},
+		{"callAdd","()V",(void*)callAdd},
+		{"callprintStr","()V",(void*)callprintStr},
+		{"callhelloFromMainActivity","()V",(void*)callhelloFromMainActivity},
+		{"callStaticMethod","()V",(void*)callStaticMethod},
+
+};
+
+int register_JNIBasic(JavaVM* vm ,JNIEnv* env){
+
+	if (gFields.JniBasic.clazz == NULL) {
+		LOGE("Can't find com/bryan/ndk/JniBasic");
+		return -1;
+	}
+	if (env->RegisterNatives(gFields.JniBasic.clazz,gMethods,NELEM(gMethods)) !=JNI_OK) {
+		LOGE("RegisterNatives failed for  %s\n","JniBasic");
+		return JNI_ERR;
+	}
+	LOGI("Register JniBasic success");
+	return JNI_OK;
 }
