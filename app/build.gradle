@@ -12,12 +12,8 @@ android {
 	    externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11 -frtti -fexceptions"
-                 // 指定只用clang编译器
-                // Clang是一个C语言、Objective-C、C++语言的轻量级编译器。
-                arguments "-DANDROID_TOOLCHAIN=clang","-DANDROID_STL=gnustl_static"
-
-                // 生成.so库的目标平台
-                //abiFilters "armeabi-v7a" , "armeabi" ,"x86"
+                // 生成.so库的目标平台 armeabi已经废弃了
+                //abiFilters "armeabi-v7a" , "x86"
             }
         }
     }
@@ -38,7 +34,7 @@ android {
     productFlavors {
         armeabi {
             ndk{
-                abiFilters 'armeabi'
+                abiFilters 'armeabi-v7a'
             }
             dimension "my"
 
@@ -54,7 +50,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
 }

@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "com_bryan_ndk_JniBasic.h"
-#include <android/log.h>
-#include <vector>
 #define LOG_TAG "nativeProcess"
-#define LOG(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#include "log.h"
+#include <vector>
+
 using namespace std;
 
 /**
@@ -14,21 +14,21 @@ using namespace std;
 
 
 JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHello(JNIEnv *env, jclass jcls){
-    LOG("hello world from c中文");
+	LOGI("hello world from c中文");
     return env->NewStringUTF("hello world from c中文");
 
 }
 
 JNIEXPORT jint JNICALL Java_com_bryan_ndk_JniBasic_add(JNIEnv *env, jclass jcls, jint x, jint y){
-    LOG("x=%d\n", x);
-    LOG("y=%d\n", y);
+	LOGI("x=%d\n", x);
+	LOGI("y=%d\n", y);
 
 	vector<int> ves;
 	ves.push_back(1);
 	ves.push_back(2);
 	ves.push_back(4);
-	LOG("vector:first=%d",*(ves.begin()));
-	LOG("vector:size=%d",ves.size());
+	LOGI("vector:first=%d",*(ves.begin()));
+	LOGI("vector:size=%d",ves.size());
     return x + y;
 }
 
@@ -41,7 +41,7 @@ JNIEXPORT jstring JNICALL Java_com_bryan_ndk_JniBasic_sayHelloInC(JNIEnv *env, j
     strcat(copy,"_concat");
 
 	env->ReleaseStringUTFChars(jstr,cstr);
-    LOG("%s", copy);
+	LOGI("%s", copy);
     return env->NewStringUTF(copy);
 }
 
@@ -52,8 +52,7 @@ JNIEXPORT jintArray JNICALL Java_com_bryan_ndk_JniBasic_intMethod(JNIEnv *env, j
     // 对数组中每个元素 +5
     int length =env->GetArrayLength( jintArr);
     int* array =env->GetIntArrayElements(jintArr, 0);
-    int i=0;
-    for(;i<length;i++){
+    for(int i=0;i<length;i++){
         *(array+i)+=5;
     }
     return jintArr;

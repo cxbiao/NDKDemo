@@ -3,9 +3,10 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "com_bryan_ndk_JniCallBack.h"
-#include <android/log.h>
 #define LOG_TAG "nativeProcess"
-#define LOG(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#include "log.h"
+
+
 
 
 
@@ -23,18 +24,18 @@ static void* native_thread_exec(void *arg) {
 	//获取Java层对应的类
 	jclass javaClass = env->GetObjectClass(gJavaObj);
 	if( javaClass == NULL ) {
-		LOG("Fail to find javaClass");
+		LOGI("Fail to find javaClass");
 		return 0;
 	}
 
 	//获取Java层被回调的函数
 	jmethodID javaCallback = env->GetMethodID(javaClass,"onNativeCallback","(I)V");
 	if( javaCallback == NULL) {
-		LOG("Fail to find method onNativeCallback");
+        LOGI("Fail to find method onNativeCallback");
 		return 0;
 	}
 
-	LOG("native_thread_exec loop enter");
+    LOGI("native_thread_exec loop enter");
 
 	int count = 0;
 
@@ -46,11 +47,14 @@ static void* native_thread_exec(void *arg) {
 
 		//休眠1秒
 		sleep(1);
+        //usleep(1000000); //微秒
 	}
 
+    env->DeleteLocalRef(javaClass);
 	gJavaVM->DetachCurrentThread();
 
-	LOG("native_thread_exec loop leave");
+    LOGI("native_thread_exec loop leave");
+    return  NULL;
 }
 
 
@@ -80,11 +84,11 @@ JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeThreadStart(JNIEnv *
 	//通过pthread库创建线程
 	pthread_t threadId;
 	if( pthread_create(&threadId,NULL,native_thread_exec,NULL) != 0 ) {
-	   LOG("native_thread_start pthread_create fail !");
+        LOGI("native_thread_start pthread_create fail !");
 	   return;
 	}
 
-	LOG("native_thread_start success");
+    LOGI("native_thread_start success");
 }
 
 /*
@@ -94,7 +98,7 @@ JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeThreadStart(JNIEnv *
  */
 JNIEXPORT void JNICALL Java_com_bryan_ndk_JniCallBack_nativeThreadStop(JNIEnv *env, jobject obj){
 	gIsThreadExit = 1;
-	LOG("native_thread_stop success");
+    LOGI("native_thread_stop success");
 }
 
 
