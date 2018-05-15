@@ -7,16 +7,22 @@
 #include "log.h"
 #include "JNIHelp.h"
 #include "utils.h"
+#include <thread>
 
-
-
+using  namespace std;
 
 JavaVM * gJavaVM;
 jobject  gJavaObj;
 static volatile int gIsThreadExit = 0;
 
 
-static void* native_thread_exec(void *arg) {
+/**
+ * static void* native_thread_exec(void *arg) pthread线程函数
+ * @param arg
+ * @return
+ */
+
+static void native_thread_exec() {
 
 	JNIEnv *env;
 
@@ -36,16 +42,16 @@ static void* native_thread_exec(void *arg) {
 
 		//回调Java层的函数
 		env->CallVoidMethod(gFields.JniCallBack.instance,gFields.JniCallBack.onNativeCallback,count++);
-
 		//休眠1秒
 		sleep(1);
         //usleep(1000000); //微秒
+
 	}
 
 	//gFields.vm->DetachCurrentThread();
 
     LOGI("native_thread_exec loop leave");
-    return  NULL;
+   // return  NULL;
 }
 
 
@@ -75,13 +81,19 @@ static void  start(JNIEnv *env, jobject obj){
 	gIsThreadExit = 0;
 
 	//通过pthread库创建线程
-	pthread_t threadId;
-	if( pthread_create(&threadId,NULL,native_thread_exec,NULL) != 0 ) {
-        LOGI("native_thread_start pthread_create fail !");
-	   return;
-	}
+//	pthread_t threadId;
+//	if( pthread_create(&threadId,NULL,native_thread_exec,NULL) != 0 ) {
+//        LOGI("native_thread_start pthread_create fail !");
+//	   return;
+//	}
 
     LOGI("native_thread_start success");
+    //c++11线程函数
+    thread t(native_thread_exec);
+    t.detach();
+
+
+
 }
 
 /*
